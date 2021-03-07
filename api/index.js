@@ -141,10 +141,8 @@ function retrieveFileBytes(file) {
     //
 }
 
-// addTwo.mjs
-function process (req, res) {
-  const { name = 'World' } = req.query
-  res.send(`Hello ${name}!`)
-}
-
-export { process }
+export default (req, res) => {
+    console.log(">> SOMETHING ON THE LOGS");
+    res.statusCode = 200;
+    res.json({ name: "John Doe" })
+};
