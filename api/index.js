@@ -141,8 +141,11 @@ function retrieveFileBytes(file) {
     //
 }
 
-module.export = (req, res) => {
-    console.log(">> SOMETHING ON THE LOGS");
-    res.statusCode = 200;
-    res.json({ name: "John Doe" })
-};
+module.exports = (req, res) => {
+    console.log(">>> THIS IS ON THE LOGS")
+    res.json({
+        body: req.body,
+        query: req.query,
+        cookies: req.cookies,
+    })
+}
