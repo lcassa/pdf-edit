@@ -2,12 +2,15 @@ import { PDFDocument } from 'pdf-lib'
 import * as fs from 'fs'
 import path from 'path'
 import {google} from 'googleapis'
-import {readline} from 'readline'
+import * as readline from 'readline'
+import dotenv from 'dotenv'
 
 
 // folder to sign on google drive
 //const folder = process.argv.slice(2)[0]
 const folder = 'sign-pdf'
+
+dotenv.config()
 
 // retrieve file from google drive 108g_k7PDpMNY_LIFPBxZx3_MlMUrCoNa
 
