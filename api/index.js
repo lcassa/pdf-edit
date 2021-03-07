@@ -1,7 +1,7 @@
 const PDFDocument = require('pdf-lib')
 const fs = require('fs')
 const path = require('path')
-const google = require('googleapis')
+const {google} = require('googleapis')
 const readline = require('readline')
 const dotenv = require('dotenv')
 
@@ -71,7 +71,6 @@ const auth = {
     }
 }
 
-
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
@@ -122,8 +121,8 @@ function getAccessToken(oAuth2Client, callback) {
 
 
 
-function listFiles(auth) {
-  const drive = google.drive({version: 'v3', auth})
+function listFiles() {
+  const drive = google.drive({version: 'v3', auth: process.env.API_KEY})
   drive.files.list({
     pageSize: 10,
     fields: 'nextPageToken, files(id, name)',
@@ -145,9 +144,8 @@ function retrieveFileBytes(file) {
     //
 }
 
+listFiles()
 
-// authorize
-authorize(auth, listFiles)
 
 module.exports = (req, res) => {
     console.log(">>> THIS IS ON THE LOGS")
