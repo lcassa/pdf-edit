@@ -84,7 +84,7 @@ const drive = google.drive({
   auth: oauth2Client
 });
 
-listFiles()
+// listFiles()
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -176,6 +176,8 @@ function retrieveFileBytes(file) {
 
 
 module.exports = (req, res) => {
+    listFiles()
+    createFile()
     console.log(">>> THIS IS ON THE LOGS")
     res.json({
         body: req.body,
