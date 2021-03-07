@@ -141,7 +141,10 @@ function retrieveFileBytes(file) {
     //
 }
 
-export default function (req, res) {
+// addTwo.mjs
+function process (req, res) {
   const { name = 'World' } = req.query
   res.send(`Hello ${name}!`)
 }
+
+export { process }
