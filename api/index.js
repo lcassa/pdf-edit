@@ -71,6 +71,21 @@ const auth = {
     }
 }
 
+// const drive = google.drive({version: 'v3', auth: process.env.API_KEY})
+
+const oauth2Client = new google.auth.OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  "https://pdf-edit.vercel.app/api"
+);
+
+const drive = google.drive({
+  version: 'v3',
+  auth: oauth2Client
+});
+
+listFiles()
+
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
@@ -122,7 +137,7 @@ function getAccessToken(oAuth2Client, callback) {
 
 
 function listFiles() {
-  const drive = google.drive({version: 'v3', auth: process.env.API_KEY})
+  
   drive.files.list({
     pageSize: 10,
     fields: 'nextPageToken, files(id, name)',
@@ -140,11 +155,24 @@ function listFiles() {
   })
 }
 
+function createFile() {
+    const res = drive.files.create({
+        requestBody: {
+            name: 'Test',
+            mimeType: 'text/plain'
+        },
+        media: {
+            mimeType: 'text/plain',
+            body: 'Hello World'
+        }
+    });
+}
+
 function retrieveFileBytes(file) {
     //
 }
 
-listFiles()
+// createFile()
 
 
 module.exports = (req, res) => {
