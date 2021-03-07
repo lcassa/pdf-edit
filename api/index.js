@@ -1,9 +1,9 @@
-import { PDFDocument } from 'pdf-lib'
-import * as fs from 'fs'
-import path from 'path'
-import {google} from 'googleapis'
-import * as readline from 'readline'
-import dotenv from 'dotenv'
+const PDFDocument = require('pdf-lib')
+const fs = require('fs')
+const path = require('path')
+const google = require('googleapis')
+const readline = require('readline')
+const dotenv = require('dotenv')
 
 
 // folder to sign on google drive
@@ -141,7 +141,7 @@ function retrieveFileBytes(file) {
     //
 }
 
-export default (req, res) => {
+module.export = (req, res) => {
     console.log(">> SOMETHING ON THE LOGS");
     res.statusCode = 200;
     res.json({ name: "John Doe" })
