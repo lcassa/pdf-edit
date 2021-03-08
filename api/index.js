@@ -149,7 +149,8 @@ function listFiles(auth) {
   });
 }
 
-function createFile() {
+function createFile(auth) {
+    const drive = google.drive({version: 'v3', auth});
     const res = drive.files.create({
         requestBody: {
             name: 'Test',
@@ -168,7 +169,7 @@ function retrieveFileBytes(file) {
 
 function main(req, res) {
     authorize(credentials, listFiles)
-    createFile()
+    authorize(credentials, createFile)
     console.log(">>> THIS IS ON THE LOGS")
     res.json({
         body: req.body,
