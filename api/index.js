@@ -59,30 +59,18 @@ const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly']
 // time.
 const TOKEN_PATH = 'token.json'
 
-const auth = {
+const credentials = {
     "web": {
-        "client_id": process.env.CLIENT_ID,
-        "project_id": "pdf-edit-1615113808913",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_secret": process.env.CLIENT_SECRET,
-        "redirect_uris":["https://pdf-edit.vercel.app/api"]
+        "client_id":process.env.CLIENT_ID,
+        "project_id":"pdf-edit-1615113808913",
+        "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+        "token_uri":"https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret":process.env.CLIENT_SECRET,
+        "redirect_uris":["https://pdf-edit.vercel.app/api/auth"],
+        "javascript_origins":["https://pdf-edit.vercel.app"]
     }
 }
-
-// const drive = google.drive({version: 'v3', auth: process.env.API_KEY})
-
-const oauth2Client = new google.auth.OAuth2(
-  process.env.CLIENT_ID,
-  process.env.CLIENT_SECRET,
-  "https://pdf-edit.vercel.app/api"
-);
-
-const drive = google.drive({
-  version: 'v3',
-  auth: oauth2Client
-});
 
 // listFiles()
 
@@ -93,14 +81,16 @@ const drive = google.drive({
  * @param {function} callback The callback to call with the authorized client.
  */
 function authorize(credentials, callback) {
-  const oAuth2Client = new google.auth.OAuth2(credentials.web.client_id, credentials.web.client_secret, credentials.web.redirect_uris[0])
+  const {client_secret, client_id, redirect_uris} = credentials.web;
+  const oAuth2Client = new google.auth.OAuth2(
+      client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getAccessToken(oAuth2Client, callback)
-    oAuth2Client.setCredentials(JSON.parse(token))
-    callback(oAuth2Client)
-  })
+    if (err) return getAccessToken(oAuth2Client, callback);
+    oAuth2Client.setCredentials(JSON.parse(token));
+    callback(oAuth2Client);
+  });
 }
 
 /**
@@ -177,7 +167,7 @@ function retrieveFileBytes(file) {
 }
 
 function main(req, res) {
-    authorize(auth, listFiles)
+    authorize(credentials, listFiles)
     createFile()
     console.log(">>> THIS IS ON THE LOGS")
     res.json({
@@ -186,7 +176,5 @@ function main(req, res) {
         cookies: req.cookies,
     })
 }
-
-main()
 
 module.exports = main
