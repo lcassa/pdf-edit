@@ -176,7 +176,7 @@ function retrieveFileBytes(file) {
 
 
 module.exports = (req, res) => {
-    console.log(drive.files)
+    console.log(drive.files.create())
     console.log(">>> THIS IS ON THE LOGS")
     res.json({
         body: req.body,
