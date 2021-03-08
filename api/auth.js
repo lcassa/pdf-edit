@@ -93,7 +93,7 @@ function listFiles(auth) {
 function main(req, res) {
     console.log(">>> THIS IS ON THE LOGS")
     res.writeHeader(200, {"Content-Type": "text/html"});  
-    res.write("<a href='https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.metadata.readonly&response_type=code&client_id=844375622744-l2ja7irdv272j8dhjdcovsic9bftdork.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fpdf-edit.vercel.app'>clique aqui</a>");  
+    res.write();  
     res.end(); 
 }
 
