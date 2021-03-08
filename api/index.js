@@ -172,8 +172,8 @@ function retrieveFileBytes(file) {
     //
 }
 
-
-module.exports = (req, res) => {
+function main(req, res) {
+    listFiles()
     console.log(">>> THIS IS ON THE LOGS")
     res.json({
         body: req.body,
@@ -181,3 +181,5 @@ module.exports = (req, res) => {
         cookies: req.cookies,
     })
 }
+
+module.exports = main
