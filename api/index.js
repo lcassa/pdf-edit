@@ -136,23 +136,27 @@ function getAccessToken(oAuth2Client, callback) {
 
 
 
-function listFiles() {
-  
+/**
+ * Lists the names and IDs of up to 10 files.
+ * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ */
+function listFiles(auth) {
+  const drive = google.drive({version: 'v3', auth});
   drive.files.list({
     pageSize: 10,
     fields: 'nextPageToken, files(id, name)',
   }, (err, res) => {
-    if (err) return console.log('The API returned an error: ' + err)
-    const files = res.data.files
+    if (err) return console.log('The API returned an error: ' + err);
+    const files = res.data.files;
     if (files.length) {
-      console.log('Files:')
+      console.log('Files:');
       files.map((file) => {
-        console.log(`${file.name} (${file.id})`)
-      })
+        console.log(`${file.name} (${file.id})`);
+      });
     } else {
-      console.log('No files found.')
+      console.log('No files found.');
     }
-  })
+  });
 }
 
 function createFile() {
@@ -173,13 +177,16 @@ function retrieveFileBytes(file) {
 }
 
 function main(req, res) {
+    authorize(auth, listFiles)
     createFile()
     console.log(">>> THIS IS ON THE LOGS")
-    res.json({
-        body: req.body,
-        query: req.query,
-        cookies: req.cookies,
-    })
+    // res.json({
+    //     body: req.body,
+    //     query: req.query,
+    //     cookies: req.cookies,
+    // })
 }
+
+main()
 
 module.exports = main
