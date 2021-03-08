@@ -173,7 +173,7 @@ function retrieveFileBytes(file) {
 }
 
 function main(req, res) {
-    listFiles()
+    createFile()
     console.log(">>> THIS IS ON THE LOGS")
     res.json({
         body: req.body,
