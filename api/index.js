@@ -180,11 +180,11 @@ function main(req, res) {
     authorize(auth, listFiles)
     createFile()
     console.log(">>> THIS IS ON THE LOGS")
-    // res.json({
-    //     body: req.body,
-    //     query: req.query,
-    //     cookies: req.cookies,
-    // })
+    res.json({
+        body: req.body,
+        query: req.query,
+        cookies: req.cookies,
+    })
 }
 
 main()
