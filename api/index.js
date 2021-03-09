@@ -67,7 +67,7 @@ const credentials = {
         "token_uri":"https://oauth2.googleapis.com/token",
         "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
         "client_secret":process.env.CLIENT_SECRET,
-        "redirect_uris":["https://pdf-edit.vercel.app/api/auth"],
+        "redirect_uris":["https://pdf-edit.vercel.app/api/oath2callback"],
         "javascript_origins":["https://pdf-edit.vercel.app"]
     }
 }
@@ -80,50 +80,22 @@ const credentials = {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
+function authorize(credentials) {
   const {client_secret, client_id, redirect_uris} = credentials.web;
-  const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
+  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[1]);
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getAccessToken(oAuth2Client, callback);
-    oAuth2Client.setCredentials(JSON.parse(token));
-    callback(oAuth2Client);
-  });
-}
-
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
- */
-function getAccessToken(oAuth2Client, callback) {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-  })
-  console.log('Authorize this app by visiting this url:', authUrl)
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  })
-  rl.question('Enter the code from that page here: ', (code) => {
-    rl.close()
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error('Error retrieving access token', err)
-      oAuth2Client.setCredentials(token)
-      // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-        if (err) return console.error(err)
-        console.log('Token stored to', TOKEN_PATH)
-      })
-      callback(oAuth2Client)
-    })
+    if (err) {
+        return oAuth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: SCOPES,
+        })
+    }
+    oAuth2Client.setCredentials(JSON.parse(token))
+    return oAuth2Client
   })
 }
-
 
 
 /**
@@ -168,14 +140,24 @@ function retrieveFileBytes(file) {
 }
 
 function main(req, res) {
-    authorize(credentials, listFiles)
-    authorize(credentials, createFile)
-    console.log(">>> THIS IS ON THE LOGS")
-    res.json({
-        body: req.body,
-        query: req.query,
-        cookies: req.cookies,
-    })
+    const auth = authorize(credentials)
+    // needs authorization
+    if(typeof auth === "string") {
+        console.log("Not authorized: " + auth)
+         res.redirect(auth)
+    }
+    // is authorized
+    else {
+        console.log("Authorized! " + auth)
+        listFiles(auth)
+        createFile(auth)
+        console.log(">>> THIS IS ON THE LOGS")
+        res.json({
+            body: req.body,
+            query: req.query,
+            cookies: req.cookies,
+        })
+    }
 }
 
 module.exports = main
