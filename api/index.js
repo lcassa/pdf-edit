@@ -148,7 +148,7 @@ function main(req, res) {
     if(typeof auth === "string") {
         console.log("Not authorized: " + auth)
         res.writeHeader(200, {"Content-Type": "text/html"})
-        res.write('<script>window.location.href=' + auth + '</script>')
+        res.write('<script>window.location.href="' + auth + '"</script>')
         res.end()
     }
     // is authorized
