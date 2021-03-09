@@ -85,18 +85,19 @@ function authorize(credentials) {
   const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) {
-        console.log(err)
-        return oAuth2Client.generateAuthUrl({
-            access_type: 'offline',
-            scope: SCOPES,
-        })
-    }
+  try {
+    token = fs.readFileSync(TOKEN_PATH)
     console.log(token)
     oAuth2Client.setCredentials(JSON.parse(token))
     return oAuth2Client
-  })
+  }
+  catch(e) {
+    console.log(e)
+    return oAuth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: SCOPES,
+        })
+  }
 }
 
 
