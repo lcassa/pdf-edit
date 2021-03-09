@@ -147,7 +147,7 @@ function main(req, res) {
     // needs authorization
     if(typeof auth === "string") {
         console.log("Not authorized: " + auth)
-         res.redirect(auth)
+        res.html('<script>window.location.href=' + auth + '</script>')
     }
     // is authorized
     else {
