@@ -82,16 +82,18 @@ const credentials = {
  */
 function authorize(credentials) {
   const {client_secret, client_id, redirect_uris} = credentials.web;
-  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[1]);
+  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
     if (err) {
+        console.log(err)
         return oAuth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: SCOPES,
         })
     }
+    console.log(token)
     oAuth2Client.setCredentials(JSON.parse(token))
     return oAuth2Client
   })

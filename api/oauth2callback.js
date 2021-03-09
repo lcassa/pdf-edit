@@ -31,7 +31,7 @@ function main(req, res) {
 	}
 	console.log("Found code to create token")
 	const {client_secret, client_id, redirect_uris} = credentials.web;
-  	const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[1]);
+  	const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
     const { token } = await oauth2Client.getToken(req.query.code)
     oAuth2Client.setCredentials(token)
     // Store the token to disk for later program executions
