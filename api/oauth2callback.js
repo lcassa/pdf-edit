@@ -1,5 +1,6 @@
 const {google} = require('googleapis')
 const dotenv = require('dotenv')
+const fs = require('fs')
 
 dotenv.config()
 
@@ -25,14 +26,14 @@ const credentials = {
 }
 
 function main(req, res) {
-	if(!req.query.code) {
+	if(!req.query || !req.query.code) {
 		console.log("Couldn't find code on request query")
 		return
 	}
 	console.log("Found code to create token")
 	const {client_secret, client_id, redirect_uris} = credentials.web;
   	const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-    oauth2Client.getToken(req.query.code, (err, token) => {
+    oAuth2Client.getToken(req.query.code, (err, token) => {
     	oAuth2Client.setCredentials(token)
 	    // Store the token to disk for later program executions
 	    fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
