@@ -72,31 +72,12 @@ const credentials = {
     }
 }
 
+const {client_secret, client_id, redirect_uris} = credentials.web
+const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
+const token
+
 // listFiles()
 
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
- */
-function authorize(credentials, token) {
-  const {client_secret, client_id, redirect_uris} = credentials.web;
-  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-
-  // Check if we have previously stored a token.
-  if(token) {
-    oAuth2Client.setCredentials(token)
-    return oAuth2Client
-  }
-  else {
-    console.log("Token needs to be generated")
-    return oAuth2Client.generateAuthUrl({
-            access_type: 'offline',
-            scope: SCOPES,
-        })
-  }
-}
 
 
 /**
@@ -141,26 +122,29 @@ function retrieveFileBytes(file) {
 }
 
 async function main(req, res) {
-    const auth = authorize(credentials, await req.app.get('token'))
-    // needs authorization
-    if(typeof auth === "string") {
-        console.log("Not authorized: " + auth)
+    // generate and set token
+    if(req.query && req.query.code) {
+        oAuth2Client.setCredentials(await oAuth2Client.getToken(req.query.code))
+    }
+    else {
+        const auth = oAuth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: SCOPES,
+        })
         res.writeHeader(200, {"Content-Type": "text/html"})
         res.write('<script>window.location.href="' + auth + '"</script>')
         res.end()
+        return
     }
-    // is authorized
-    else {
-        console.log("Authorized! " + auth)
-        listFiles(auth)
-        createFile(auth)
-        console.log(">>> THIS IS ON THE LOGS")
-        res.json({
-            body: req.body,
-            query: req.query,
-            cookies: req.cookies,
-        })
-    }
+
+    console.log("Authorized!")
+    listFiles(auth)
+    createFile(auth)
+    res.json({
+        body: req.body,
+        query: req.query,
+        cookies: req.cookies,
+    })
 }
 
 module.exports = main
