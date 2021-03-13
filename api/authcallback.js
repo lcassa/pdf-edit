@@ -25,7 +25,7 @@ const credentials = {
     }
 }
 
-function main(req, res) {
+async function main(req, res) {
 	if(!req.query || !req.query.code) {
 		console.log("Couldn't find code on request query")
 		res.writeHeader(200, {"Content-Type": "text/html"})
@@ -38,7 +38,7 @@ function main(req, res) {
   	const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
     oAuth2Client.getToken(req.query.code, (err, token) => {
     	oAuth2Client.setCredentials(token)
-    	req.app.set('token', token)
+    	await req.app.set('token', token)
     	res.redirect("api/index")
 	    // Store the token to disk for later program executions
 	  //   fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {

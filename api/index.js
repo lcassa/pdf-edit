@@ -140,8 +140,8 @@ function retrieveFileBytes(file) {
     //
 }
 
-function main(req, res) {
-    const auth = authorize(credentials, req.session.token)
+async function main(req, res) {
+    const auth = authorize(credentials, await req.app.get('token'))
     // needs authorization
     if(typeof auth === "string") {
         console.log("Not authorized: " + auth)
