@@ -38,15 +38,17 @@ function main(req, res) {
   	const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
     oAuth2Client.getToken(req.query.code, (err, token) => {
     	oAuth2Client.setCredentials(token)
+    	req.app.set('token', token)
+    	res.redirect("api/index")
 	    // Store the token to disk for later program executions
-	    fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-	        if (err) return console.error(err)
-	        console.log('Token stored to', TOKEN_PATH)
-		    res.writeHeader(200, {"Content-Type": "text/html"})
-			res.write('<body>Successfully authenticated!</body>')
-			res.end()
-	    	// res.redirect("/api/index")
-	    })
+	  //   fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+	  //       if (err) return console.error(err)
+	  //       console.log('Token stored to', TOKEN_PATH)
+		 //    res.writeHeader(200, {"Content-Type": "text/html"})
+			// res.write('<body>Successfully authenticated!</body>')
+			// res.end()
+	  //   	// res.redirect("/api/index")
+	  //   })
     })
 }
 

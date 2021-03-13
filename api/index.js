@@ -80,19 +80,17 @@ const credentials = {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials) {
+function authorize(credentials, token) {
   const {client_secret, client_id, redirect_uris} = credentials.web;
   const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
-  try {
-    token = fs.readFileSync(TOKEN_PATH)
-    console.log(token)
-    oAuth2Client.setCredentials(JSON.parse(token))
+  if(token) {
+    oAuth2Client.setCredentials(token)
     return oAuth2Client
   }
-  catch(e) {
-    console.log(e)
+  else {
+    console.log("Token needs to be generated")
     return oAuth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: SCOPES,
@@ -143,7 +141,7 @@ function retrieveFileBytes(file) {
 }
 
 function main(req, res) {
-    const auth = authorize(credentials)
+    const auth = authorize(credentials, req.session.token)
     // needs authorization
     if(typeof auth === "string") {
         console.log("Not authorized: " + auth)
