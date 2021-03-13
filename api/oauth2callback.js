@@ -28,6 +28,9 @@ const credentials = {
 function main(req, res) {
 	if(!req.query || !req.query.code) {
 		console.log("Couldn't find code on request query")
+		res.writeHeader(200, {"Content-Type": "text/html"})
+		res.write('<body>Couldnt find code on request query</body>')
+		res.end()
 		return
 	}
 	console.log("Found code to create token")
@@ -39,6 +42,9 @@ function main(req, res) {
 	    fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
 	        if (err) return console.error(err)
 	        console.log('Token stored to', TOKEN_PATH)
+		    res.writeHeader(200, {"Content-Type": "text/html"})
+			res.write('<body>Successfully authenticated!</body>')
+			res.end()
 	    	// res.redirect("/api/index")
 	    })
     })
