@@ -133,13 +133,16 @@ async function main(req, res) {
     }
 
     console.log("Authorized!")
-    listFiles()
-    createFile()
-    res.json({
-        body: req.body,
-        query: req.query,
-        cookies: req.cookies,
+    const drive = google.drive({version: 'v3', oAuth2Client});
+    const files = await drive.files.list({
+        pageSize: 10,
+        fields: 'nextPageToken, files(id, name)',
     })
+    console.log(files)
+    console.dir(files)
+    res.writeHeader(200, {"Content-Type": "text/html"})
+    res.write('<body>' + files + '</body>')
+    res.end()
 }
 
 module.exports = main
