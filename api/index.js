@@ -75,16 +75,12 @@ const credentials = {
 const {client_secret, client_id, redirect_uris} = credentials.web
 const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
 
-// listFiles()
-
-
-
 /**
  * Lists the names and IDs of up to 10 files.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listFiles(auth) {
-  const drive = google.drive({version: 'v3', auth});
+function listFiles() {
+  const drive = google.drive({version: 'v3', oAuth2Client});
   drive.files.list({
     pageSize: 10,
     fields: 'nextPageToken, files(id, name)',
@@ -102,8 +98,8 @@ function listFiles(auth) {
   });
 }
 
-function createFile(auth) {
-    const drive = google.drive({version: 'v3', auth});
+function createFile() {
+    const drive = google.drive({version: 'v3', oAuth2Client});
     const res = drive.files.create({
         requestBody: {
             name: 'Test',
@@ -126,19 +122,19 @@ async function main(req, res) {
         oAuth2Client.setCredentials(await oAuth2Client.getToken(req.query.code))
     }
     else {
-        const auth = oAuth2Client.generateAuthUrl({
+        const authUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: SCOPES,
         })
         res.writeHeader(200, {"Content-Type": "text/html"})
-        res.write('<script>window.location.href="' + auth + '"</script>')
+        res.write('<script>window.location.href="' + authUrl + '"</script>')
         res.end()
         return
     }
 
     console.log("Authorized!")
-    listFiles(auth)
-    createFile(auth)
+    listFiles()
+    createFile()
     res.json({
         body: req.body,
         query: req.query,
